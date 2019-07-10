@@ -1,5 +1,5 @@
 const express = require('express')
-const port = 8633
+const port = 8632
 let TronLib = require('./TronLib.js')
 
 class Proxy {
@@ -46,20 +46,18 @@ class Proxy {
 				this.app.post('/tron/create-account',  async (req, res) => {
     				return new Promise(async(resolve,reject)=>{
     				    try{
-    				    	let data = await this.tronLib.generateAccount();
-    				    	let result = JSON.stringify({"publicKey": data.publicKey, "secretKey": data.secretKey});
+							let data = await this.tronLib.generateAccount();
+    				    	let result = JSON.stringify({"address": data.address, "privateKey": data.privateKey});
 							res.send(result)
     				    }catch(e){
     				        return reject(e);
     				    }
 					})
 				})
-				
             }catch (e) {
                 console.log(e);
             }
         });
-
     }
 }
 

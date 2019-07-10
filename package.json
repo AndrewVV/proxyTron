@@ -11,6 +11,7 @@
     "@tronscan/client": "^0.2.51",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "node-fetch": "^2.6.0",
     "tronweb": "^2.6.4"
   },
   "devDependencies": {

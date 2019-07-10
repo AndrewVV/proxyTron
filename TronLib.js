@@ -1,4 +1,5 @@
 const TronWeb = require('tronweb')
+const fetch = require('node-fetch'); 
 const DecimalConverter = require('./DecimalConverter');
 const HttpProvider = TronWeb.providers.HttpProvider;
 const CryptoUtils = require("@tronscan/client/src/utils/crypto");
@@ -7,6 +8,7 @@ const TransactionUtils = require("@tronscan/client/src/utils/transactionBuilder"
 const fullNode = new HttpProvider('https://api.shasta.trongrid.io');
 const solidityNode = new HttpProvider('https://api.shasta.trongrid.io');
 const eventServer = 'https://api.shasta.trongrid.io';
+const fullMainNode = 'https://api.trongrid.io';
 
 // testnet privkey
 const privateKey = '0560d5eed51ff19c1ae98da2a5be0ca0b3a9d71ebad10c407db0f8cb093d47b0';
@@ -17,17 +19,14 @@ class TronLib {
     		fullNode,
     		solidityNode,
     		eventServer,
-    		privateKey,
+    		privateKey, 
 		);
-		// test send tx
-		//this.sendTx("TPQX3pUVN1S7JcaVMVMVDBptxAR4WVMkSV", 2000000)
 	}
 
     getBalance(address){
     	return new Promise(async(resolve,reject)=>{
     	    try{
 				let balance = await this.tronWeb.trx.getBalance(address)
-				console.log(balance)
 				balance = this.toDecimals(balance)
 				return resolve(balance)
     	    }catch(e){
@@ -51,21 +50,41 @@ class TronLib {
 		})
 	}
 	
-	//  doesn`t work
 	generateAccount(){
 		return new Promise(async(resolve,reject)=>{
     	    try{
-				let pair;
+				let pair = await this.postMethod(fullMainNode+'/wallet/generateaddress')
 				let data = {
-					publicKey: pair.publicKey(),
-					secretKey: pair.secret()
+					address: pair.address,
+					privateKey: pair.privateKey
 				}
 				return resolve(data)
 			}catch(e){
     	        return reject(e);
 			}
 		})
-	} 
+	}
+
+	postMethod(url, body={}){
+		return new Promise(async(resolve,reject)=>{
+			try{
+				let options= {
+					method: 'POST',
+                	body: JSON.stringify(body),
+                	headers: {
+						"Content-Type": "application/json"
+					}
+            	};
+				let result = await fetch(url, options)
+				.then(function(responce) {
+					return responce.json()
+				})
+				return resolve(result);
+			}catch(e){
+    	    	return reject(e);
+			}
+		})
+	}
 
 	toDecimals(amount, decimals=6){
         return DecimalConverter.formatToDecimals(amount, decimals);
