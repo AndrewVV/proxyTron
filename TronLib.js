@@ -1,5 +1,5 @@
 const TronWeb = require('tronweb')
-const WeiConverter = require('./WeiConverter');
+const DecimalConverter = require('./DecimalConverter');
 const HttpProvider = TronWeb.providers.HttpProvider;
 const CryptoUtils = require("@tronscan/client/src/utils/crypto");
 const TransactionUtils = require("@tronscan/client/src/utils/transactionBuilder");
@@ -26,7 +26,8 @@ class TronLib {
     getBalance(address){
     	return new Promise(async(resolve,reject)=>{
     	    try{
-    	    	let balance = await this.tronWeb.trx.getBalance(address)
+				let balance = await this.tronWeb.trx.getBalance(address)
+				console.log(balance)
 				balance = this.toDecimals(balance)
 				return resolve(balance)
     	    }catch(e){
@@ -67,10 +68,10 @@ class TronLib {
 	} 
 
 	toDecimals(amount, decimals=6){
-        return WeiConverter.formatToDecimals(amount, decimals);
+        return DecimalConverter.formatToDecimals(amount, decimals);
     }
     fromDecimals(amount, decimals=6){
-        return WeiConverter.formatFromDecimals(amount, decimals);
+        return DecimalConverter.formatFromDecimals(amount, decimals);
     }
 }
 
