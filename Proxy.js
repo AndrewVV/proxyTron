@@ -16,6 +16,18 @@ class Proxy {
 				    console.log("Server is up on port " + port)
 				})
 
+				this.app.post('/tron/create-account',  async (req, res) => {
+    				return new Promise(async(resolve,reject)=>{
+    				    try{
+							let data = await this.tronLib.generateAccount();
+    				    	let result = JSON.stringify({"address": data.address, "privateKey": data.privateKey});
+							res.send(result)
+    				    }catch(e){
+    				        return reject(e);
+    				    }
+					})
+				})
+
 				this.app.get('/tron/balance/:address',  async (req, res) => {
     				return new Promise(async(resolve,reject)=>{
     				    try{
@@ -43,17 +55,6 @@ class Proxy {
 					})
 				})
 
-				this.app.post('/tron/create-account',  async (req, res) => {
-    				return new Promise(async(resolve,reject)=>{
-    				    try{
-							let data = await this.tronLib.generateAccount();
-    				    	let result = JSON.stringify({"address": data.address, "privateKey": data.privateKey});
-							res.send(result)
-    				    }catch(e){
-    				        return reject(e);
-    				    }
-					})
-				})
             }catch (e) {
                 console.log(e);
             }
